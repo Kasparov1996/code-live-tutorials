@@ -22,6 +22,7 @@ class Route(object):
         match = regex.match(request.path)
         if match and request.method in self.methods:
             self.urlvars.update(match.groupdict())
+            request.urlvars = self.urlvars
             return True
         return False
 
@@ -40,7 +41,6 @@ class Router(object):
     def match(self, request):
         for route in self.routes:
             if route.match(request):
-                request.urlvars = route.urlvars
                 return route.handler
         return None
 
