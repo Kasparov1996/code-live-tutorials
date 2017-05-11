@@ -1,6 +1,9 @@
 import os
-from string import Template
 import config
+from jinja2 import Environment, FileSystemLoader
+
+jinja2_env = Environment(loader=FileSystemLoader(
+    config.TEMPLATE_DIRS), autoescape=True)
 
 
 class BaseHandler(object):
@@ -8,17 +11,21 @@ class BaseHandler(object):
         self.request = None
         self.response = None
 
+    def write(self, text):
+        self.response.write(text)
+
+    def redirect(self, url, status=301):
+        self.response.status = status
+        self.response.location = url
+
     def render(self, filename, **context):
-        filepath = os.path.join(config.TEMPLATE_DIR, filename)
-        if os.path.exists(filepath):
-            with open(filepath, "r") as f:
-                contents = f.read()
-            s = Template(contents)
-            return s.substitute(**context)
+        template = jinja2_env.get_template(filename)
+        self.write(template.render(**context))
 
     def __call__(self, request, response):
         self.request = request
         self.response = response
+        self.response.cache_control.no_cache = True
         action = request.method.lower()
         try:
             method = getattr(self, action)
