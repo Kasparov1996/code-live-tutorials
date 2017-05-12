@@ -3,12 +3,13 @@ from handlers.base_handler import BaseHandler
 class CatHandler(BaseHandler):
     def get(self):
         if self.request.cookies.get('remember'):
-            self.write("Cat is remembered. Click to forget <a href='/cats/forget'>forget</a>!")
+            self.render("cats/index.html")
         else:
             self.render("cats/form.html")
 
     def post(self):
-        self.response.set_cookie('remember', "1")
+        if self.request.params.get('remember') == "on":
+            self.response.set_cookie('remember', "1")
         self.redirect("/cats")
 
 class ForgetCatHandler(BaseHandler):

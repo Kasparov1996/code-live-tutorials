@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if errors %}
+<ul style="color:red;">
+    {% for error in errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h1>Login</h1>
+<form action="" method="POST">
+    <label for="username">Username: </label>
+    <input type="text" name="username"><br><br>
+    <label for="password">Password: </label>
+    <input type="password" name="password"><br><br>
+    <input type="submit" value="Login">
+</form>
+{% endblock %}
